@@ -1,18 +1,28 @@
 # `bosh rsync blobs`
 
+# Motivation
+
+`bosh sync blobs` takes a long time on a new workstation because there is a lot of stuff to download. The local network is usually way faster than the internet, and other workstations on the same network may have almost all blobs we need. Sharing blobs locally makes sense. Doing it manually sucks. Let's automate this.
+
 # User Story
 
-  As a developer of a BOSH-deployed software release, I would like to download BLOBs from a local server, so that instead of being constrained by the internet connection, `bosh sync blobs` runs as fast as the local network allows.
+> As a developer of a BOSH-deployed software release, I would like to sync BLOBs with a server on the local network, so that blobs are downloaded as fast as the **local network** connection allows) instead of being constrained by the the bandwidth of my internet connection.
 
-The local network is faster than the internet. Let's rsync $PROJECT/.blobs from a shared server to the developer workstation, so that only the first person pays the price for downloading from the internet.
+# Goals
 
-BOSH symlinks a blob correctly if the symbloic name is not present in `blobs`, but the target is present in `.blobs`. Therefore, we only need to sync `.blobs` and `bosh sync blobs` will do the right thing.
+Let's rsync $PROJECT/.blobs from a shared server to the developer workstation, so that the price for downloading a blob from the internet is only paid once.
+
+BOSH symlinks a blob correctly if the symbolic name is not present in `blobs`, but the target is present in `.blobs`. Therefore, we only need to sync `.blobs` and `bosh sync blobs` will do the right thing afterwars.
+
+# Anti-Goals
+
+Don't break how `bosh sync blobs` works.
 
 # Principle
 
-* There is a shared rsync server where everyone has read access (and some or all may have write access) to an rsync server
+* There is a shared rsync server on the local network where we have access to
 
-* A script does something like this:
+* A script does something like along these lines:
 
         ```
         cd ~/workspace/cf-release
@@ -21,7 +31,7 @@ BOSH symlinks a blob correctly if the symbloic name is not present in `blobs`, b
         rsync .blobs $BLOB_HOST/$PROJECT
         ```
 
-* We add some basic checks that prevents people from shooting themselves in the foot (like `--delete`)
+* Add some basic checks that prevents people from shooting themselves in the foot (like an accidental `rsync --delete`)
 
 # Implementation
 
@@ -33,7 +43,7 @@ BOSH symlinks a blob correctly if the symbloic name is not present in `blobs`, b
             --stats    \
             --progress \
             --archive  \
-          $BLOB_HOST:cf-release/.blobs/ \
+          $BLOB_HOST:$PROJECT/.blobs/ \
           .blobs/
 
 * Write it as a bosh cli plugin ([Dr. Nic](https://github.com/drnic) has a few examples)
@@ -42,10 +52,9 @@ BOSH symlinks a blob correctly if the symbloic name is not present in `blobs`, b
 
 ## Variables
 
-* `$BLOB_HOST` comes from `$BOSH_BLOBSTORE_RSYNC_URL` or a (sensible) default
-* `$PROJECT` is either read from BOSH or the name of the current project. It may be worth using a scheme-less URL for `$PROJECT`, e.g. `github.com/cloudfoundry/cf-release` so that we get namespacing like go.
-* Do not mix blobs across project, otherwise everyone fetches blobs of all projects. Use at least the project name as rsync project to keep things separate.
-* Keep the rsync sever config script in a separate (public) repo so that everyone can deploy it
+* `$PROJECT` is either read via BOSH or the name of the current project directory. It may be worth using a scheme-less URL for `$PROJECT`, e.g. `github.com/cloudfoundry/cf-release` so that we get namespacing like go.
+* Do not mix blobs across projects, otherwise everyone fetches blobs of all projects. Use at least the project name as rsync project to keep things separate.
+* Publish the rsync sever config script in a separate (public) repo so that everyone can deploy it
 
 ## Choices for deploying a server
 
