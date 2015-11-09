@@ -18,7 +18,7 @@ Don't break how `bosh sync blobs` works.
 
 # Principle
 
-* BOSH symlinks a blob correctly if the symbolic name is not present in `blobs`, but the target is present in `.blobs`. Therefore, we only need to rsync `.blobs` and `bosh sync blobs` will do the right thing afterwars.
+* BOSH symlinks a blob correctly if the symbolic name is not present in `blobs`, but the target is present in `.blobs`. Therefore, we only need to rsync `.blobs` and `bosh sync blobs` will do the right thing afterwards.
 
 * We assume that there is a shared rsync server on the local network where we have access to
 
