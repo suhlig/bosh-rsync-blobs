@@ -10,25 +10,25 @@
 #
 
 if [[ -z "$RSYNC_URL" ]]; then
-  echo "Error: RSYNC_URL is required, but not present." 1>&2
+  >&2 echo "Error: RSYNC_URL is required, but not present."
   exit 1
 fi
 
 BLOBS_DIR=.blobs/
 
 if [[ ! -d "$BLOBS_DIR" ]]; then
-  echo "Error: $BLOBS_DIR does not exist - is this really a BOSH release directory?" 1>&2
+  >&2 echo "Error: $BLOBS_DIR does not exist in $PWD - is this really a BOSH release directory?"
   exit 1
 fi
 
-echo "Downloading blobs from $RSYNC_URL" 1>&2
+>&2 echo "Downloading blobs from $RSYNC_URL"
 rsync --rsh=ssh --recursive --progress --human-readable "$RSYNC_URL"/ "$BLOBS_DIR"
 
-echo
-echo "Synching blobs with the BOSH director" 1>&2
+>&2 echo
+>&2 echo "Synching blobs with the BOSH director"
 bosh target
 bosh sync blobs
 
-echo
-echo "Uploading blobs to $RSYNC_URL" 1>&2
+>&2 echo
+>&2 echo "Uploading blobs to $RSYNC_URL"
 rsync --rsh=ssh --recursive --progress --human-readable "$BLOBS_DIR" "$RSYNC_URL"/
