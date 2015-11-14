@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+#
+# github.com/suhlig/bosh-rsync-blobs
+#
+# Make this easier by copying your public key to your rsync server's home directory. Either use ssh-copy-id
+# or this script (beware, this will overwrite .ssh/authorized_keys on the remote side):
+#
+# scp ~/.ssh/id_rsa.pub example.com:.ssh/authorized_keys
+#
+
+if [[ -z "$RSYNC_URL" ]]; then
+  echo "Error: RSYNC_URL is required, but not present." 1>&2
+  exit 1
+fi
+
+BLOBS_DIR=.blobs/
+
+if [[ ! -d "$BLOBS_DIR" ]]; then
+  echo "Error: $BLOBS_DIR does not exist - is this really a BOSH release directory?" 1>&2
+  exit 1
+fi
+
+echo "Downloading blobs from $RSYNC_URL" 1>&2
+rsync --rsh=ssh --recursive --progress --human-readable "$RSYNC_URL"/ "$BLOBS_DIR"
+
+echo
+echo "Synching blobs with the BOSH director" 1>&2
+bosh target
+bosh sync blobs
+
+echo
+echo "Uploading blobs to $RSYNC_URL" 1>&2
+rsync --rsh=ssh --recursive --progress --human-readable "$BLOBS_DIR" "$RSYNC_URL"/

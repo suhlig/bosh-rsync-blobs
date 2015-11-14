@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -o errexit -o nounset -o pipefail
+
+rm -Rf tmp/*
+rm -Rf tmp/.*
