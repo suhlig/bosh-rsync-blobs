@@ -22,7 +22,7 @@ if [[ ! -d "$BLOBS_DIR" ]]; then
 fi
 
 >&2 echo "Downloading blobs from $RSYNC_URL"
-rsync --rsh=ssh --recursive --progress --human-readable "$RSYNC_URL"/ "$BLOBS_DIR"
+rsync --dry-run --rsh=ssh --recursive --progress --human-readable "$RSYNC_URL"/ "$BLOBS_DIR"
 
 >&2 echo
 >&2 echo "Synching blobs with the BOSH director"
@@ -31,4 +31,4 @@ bosh sync blobs
 
 >&2 echo
 >&2 echo "Uploading blobs to $RSYNC_URL"
-rsync --rsh=ssh --recursive --progress --human-readable "$BLOBS_DIR" "$RSYNC_URL"/
+rsync --dry-run --rsh=ssh --recursive --progress --human-readable "$BLOBS_DIR" "$RSYNC_URL"/
