@@ -47,7 +47,13 @@ Don't break how `bosh sync blobs` works.
     $BLOB_HOST:$PROJECT/.blobs/ \
     .blobs/
   ```
+
+## Candidate Implementations
+
 * Write it as a bosh cli plugin ([Dr. Nic](https://github.com/drnic) has a few examples)
+
+  This would allow us to write `bosh rsync blobs` instead of `bosh-rsync-blobs`.
+
 * Might as well be a BASH script (has to be on the `$PATH`)
 * May be a wrapper around bosh that captures `sync blobs` (like [hub](https://github.com/github/hub) does)
 
@@ -79,23 +85,10 @@ Don't break how `bosh sync blobs` works.
 
 * BOSH release so that it can be deployed standalone or spiffed into a concourse deployment
   * Not so simple anymore
-  * Good fit for someone already runnign stuff under BOSH
+  * Good fit for someone already running stuff under BOSH
 
 # Questions
 
 * Should everyone upload their stuff once a new download is complete, so that the server stays fresh? Probably yes.
 * How do we clean up the server and remove obsolete files? We shouldn't let users delete, probably.
 * Is a (caching) HTTP proxy a better way to solve this?
-
-# Meta
-
-This is an experiment on running a proposal. Instead of writing a Google doc, we write the README directly and collaborate publically using Github's commenting on PRs.
-
-Work flow:
-
-1. Create a public Github project
-1. Add an empty README to it
-1. Commit and push
-1. Create a branch and write the proposal as an update to the README
-1. Push and create a PR
-1. Send RFQ to interested parties and ask for comments on the PR.
