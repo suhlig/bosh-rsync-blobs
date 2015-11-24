@@ -3,13 +3,13 @@ require 'pathname'
 require 'shellwords'
 
 class BoshRsyncBlobsTest < MiniTest::Test
-  def assert_command(expected_status = 0, *args)
+  def assert_bosh_rsync_blobs(expected_status = 0, *args)
     out, err, status = capture(args)
     assert_equal(expected_status, status.exitstatus, "Expected exit status to be #{expected_status}, but it was #{status.exitstatus}. STDERR is: '#{err}'")
     [out, err]
   end
 
-  def refute_command(expected_status = 1, *args)
+  def refute_bosh_rsync_blobs(expected_status = 1, *args)
     out, err, status = capture(args)
     assert_equal(expected_status, status.exitstatus, "Expected exit status to be #{expected_status}, but it was #{status.exitstatus}.")
     [out, err]

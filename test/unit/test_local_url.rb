@@ -12,7 +12,7 @@ class TestLocalURL < BoshRsyncBlobsTest
     source_file.write('hello')
     assert(source_file.exist?)
 
-    assert_command
+    assert_bosh_rsync_blobs
 
     test_blob = blobs_dir.join('test-blob')
     assert(test_blob.exist?, "Expect #{test_blob} to exist")
@@ -24,7 +24,7 @@ class TestLocalURL < BoshRsyncBlobsTest
     local_blob.write('hello')
     assert(local_blob.exist?)
 
-    assert_command
+    assert_bosh_rsync_blobs
 
     remote_blob = @rsync_url.join('local-blob')
     assert(remote_blob.exist?, "Expect #{remote_blob} to exist")
