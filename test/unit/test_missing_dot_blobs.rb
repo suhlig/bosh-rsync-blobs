@@ -3,11 +3,13 @@ require 'helper'
 class TestMissingDotBlobs < BoshRsyncBlobsTest
   def setup
     ENV['RSYNC_URL'] = 'example.com:873'
+    @old_path = ENV['PATH']
     ENV['PATH'] = "#{mock_bin_dir}:#{ENV['PATH']}"
   end
 
   def teardown
     ENV.delete('RSYNC_URL')
+    ENV['PATH'] = @old_path
   end
 
   def test_missing_rsync_url
@@ -18,7 +20,7 @@ class TestMissingDotBlobs < BoshRsyncBlobsTest
 
   def test_missing_blobs_dir
     _, err = refute_command
-    assert_match(%r{.blobs/ does not exist}, err)
+    assert_match(%r{.blobs does not exist}, err)
   end
 
   def test_mocked_rsync
@@ -34,7 +36,7 @@ class TestMissingDotBlobs < BoshRsyncBlobsTest
     Pathname.new(__dir__).join('..', 'bin')
   end
 
-  def blobs_dir
-    working_directory.join('.blobs')
+  def mock_bin_dir
+    Pathname.new(__dir__).join('..', 'bin')
   end
 end

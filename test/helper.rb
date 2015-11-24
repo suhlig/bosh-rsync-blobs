@@ -24,6 +24,10 @@ class BoshRsyncBlobsTest < MiniTest::Test
   end
 
   def working_directory
-    @working_directory ||= Pathname.new(Dir.mktmpdir)
+    @working_directory ||= Pathname.new(Dir.mktmpdir("working_directory-#{name}"))
+  end
+
+  def blobs_dir
+    working_directory.join('.blobs')
   end
 end
