@@ -9,6 +9,8 @@
 # scp ~/.ssh/id_rsa.pub example.com:.ssh/authorized_keys
 #
 
+set -e
+
 if [[ -z "$RSYNC_URL" ]]; then
   >&2 echo "Error: RSYNC_URL is required, but not present."
   exit 1

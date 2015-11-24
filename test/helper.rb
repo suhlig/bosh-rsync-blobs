@@ -30,4 +30,8 @@ class BoshRsyncBlobsTest < MiniTest::Test
   def blobs_dir
     working_directory.join('.blobs')
   end
+
+  def mock_bin_dir
+    Pathname.new(__dir__).join('bin')
+  end
 end

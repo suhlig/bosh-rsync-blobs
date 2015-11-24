@@ -5,6 +5,7 @@ class TestLocalURL < BoshRsyncBlobsTest
     blobs_dir.mkdir
     @rsync_url = Pathname.new(Dir.mktmpdir('source_directory'))
     ENV['RSYNC_URL'] = @rsync_url.to_s
+    ENV['PATH'] = "#{mock_bin_dir.join('bosh-mocked')}:#{ENV['PATH']}"
   end
 
   def test_sync_src_target
@@ -29,5 +30,10 @@ class TestLocalURL < BoshRsyncBlobsTest
     remote_blob = @rsync_url.join('local-blob')
     assert(remote_blob.exist?, "Expect #{remote_blob} to exist")
     assert_equal('hello', remote_blob.read)
+  end
+
+  # Make sure trailing slash in url does not harm
+  def test_chop_trailing_slash
+#    fail 'wip'
   end
 end
